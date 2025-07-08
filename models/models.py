@@ -127,6 +127,11 @@ def Qmake_decoder_set_weights(input_dim,h_dim_1,h_dim_2,latent_dim):
     return decoder
 
 def _custom_MSE(masked_data, masked_reconstruction):
+#     # "We use a dataset with standardized p_T as a target so that all quantities are O(1)" arXiv: 2108.03986 
+
+#     # Q: is the input also standardized?
+    
+
 #     jet_scale = 256/64
 #     tau_scale = 128/64
 #     muon_scale = 32/64
