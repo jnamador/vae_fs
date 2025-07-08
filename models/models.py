@@ -1,11 +1,11 @@
 """The purpose of this script is to hold the VAE Model class defintion and 
 related functions to keep the notebooks cleaner"""
 
-import numpy as np
-import matplotlib.pyplot as plt
+# import numpy as np
+# import matplotlib.pyplot as plt
 import os
-os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE" # on NERSC filelocking is not allowed
-import h5py
+# os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE" # on NERSC filelocking is not allowed
+# import h5py
 import tensorflow as tf
 # Make notebook run on other GPUS. GPT's solution ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # gpus = tf.config.list_physical_devices('GPU')
@@ -16,13 +16,13 @@ import tensorflow.keras as keras
 # from scipy.optimize imporjun26t curve_fit
 # from tensorflow.keras import layers, Model
 import tensorflow.keras.backend as K
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateaut
+# from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateaut
 # from tensorflow.keras.models import load_model
-from sklearn.metrics import roc_curve, auc
-import sklearn.metrics as sk
+# from sklearn.metrics import roc_curve, auc
+# import sklearn.metrics as sk
 # from tensorflow.keras.models import Model
 from tensorflow.keras.layers import PReLU, Input, LSTM, Flatten, Concatenate, Dense, Conv2D, TimeDistributed, MaxPooling2D, LeakyReLU, ReLU, Dropout, BatchNormalization, Activation
-from tensorflow.keras.optimizers import Adam, SGD
+# from tensorflow.keras.optimizers import Adam, SGD
 # from tensorflow.keras.metrics import Precision
 # # from qkeras import QActivation, QDense, QConv2D, QBatchNormalization, QConv2DBatchnorm # These don't seem to be used
 # # from qkeras import quantized_relu, quantized_bits
