@@ -196,7 +196,7 @@ class VAE_Model(keras.Model):
         self.encoder = encoder
         self.decoder = decoder
 
-        # beta turning part?
+        # beta tuning part?
         self.cycle_length = tf.cast(cycle_length, tf.float32)
         self.steps_per_epoch = steps_per_epoch
         self.min_beta = tf.cast(min_beta, tf.float32)
