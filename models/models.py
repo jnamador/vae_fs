@@ -130,26 +130,6 @@ def _custom_MSE(masked_data, masked_reconstruction):
 #     # "We use a dataset with standardized p_T as a target so that all quantities are O(1)" arXiv: 2108.03986 
 
 #     # Q: is the input also standardized?
-    
-
-#     jet_scale = 256/64
-#     tau_scale = 128/64
-#     muon_scale = 32/64
-#     met_scale = 512/64
-#     em_scale = 128/64
-    jet_scale = 1
-    tau_scale = 1
-    muon_scale = 1
-    met_scale = 1
-    em_scale = 1
-    # Define the indices and their corresponding scale factors
-    scale_dict = {
-        0: met_scale,
-        3: em_scale, 6: em_scale, 9: em_scale, 12: em_scale,
-        15: tau_scale, 18: tau_scale, 21: tau_scale, 24: tau_scale,
-        27: jet_scale, 30: jet_scale, 33: jet_scale, 36: jet_scale, 39: jet_scale, 42: jet_scale,
-        45: muon_scale, 48: muon_scale, 51: muon_scale, 54: muon_scale
-    }
 
     # Create the scaling tensor
     scale_tensor = tf.ones_like(masked_data)
@@ -181,7 +161,7 @@ def _custom_MSE(masked_data, masked_reconstruction):
     # Apply constraints to phi
     for i in phi_indices:
         indices = tf.stack([tf.range(batch_size), tf.fill([batch_size], i)], axis=1)
-        updates = 3.14159265258979 * tf.tanh(scaled_reconstruction[:, i] / 3.14159265258979)
+        updates = 3.14159265258979 * tf.tanh(scaled_reconstruction[:, i] / 3.14159265258979) # change to np.pi()
         scaled_reconstruction = tf.tensor_scatter_nd_update(scaled_reconstruction, indices, updates)
         
     # Calculate MSE using keras.losses.mse
@@ -254,11 +234,13 @@ class VAE_Model(keras.Model):
         self.total_loss_tracker.update_state(total_loss)
         self.reconstruction_loss_tracker.update_state(reconstruction_loss)
         self.kl_loss_tracker.update_state(kl_loss)
+        
         return {
             "loss": self.total_loss_tracker.result(),
             "reconstruction_loss": self.reconstruction_loss_tracker.result(),
             "kl_loss": self.kl_loss_tracker.result(),
             "beta": self.beta,
+            # TODO: add unscaled losses
         }
     
     # Since we overrode train_step we need test_step
