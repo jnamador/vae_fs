@@ -6,6 +6,7 @@ to evaluate NN models specific to our work"""
 import h5py
 import numpy as np
 import tensorflow.keras as keras
+from matplotlib import pyplot as plt
 
 def load_preprocessed_snl(file_path=None):
     """
@@ -115,3 +116,47 @@ def AD_score_CKL(z_mean, _): # z_log_var not used
 def AD_score_Rz(z_mean, z_log_var):
     return z_mean**2/np.exp(z_log_var)
 
+def plot_rocs(truths, scores, fig_title):
+    target_fpr = 1e-5
+    tpr_at_target = []
+    signal_names_tex = [ # latex version
+                    "Leptoquark"
+                    , "$A\\rightarrow 4\ell$"
+                    , "$h^{\pm}\\rightarrow\\tau \\nu$"
+                    , "$h^0\\rightarrow\\tau\\tau$"
+                    ]
+    signal_names_hum = [ # human readable
+                    "Leptoquark"
+                    ,"A to 4L"
+                    , "h to Tau Nu"
+                    , "h to Tau Tau"
+                    ]
+    fig, ax = plt.subplots()
+
+    for truth, score, l in zip(truths, scores, signal_names_tex):
+        fpr, tpr, thresholds = roc_curve(truth, score)
+        auc = sk.roc_auc_score(truth, score)
+        ax.plot(fpr, tpr, label=l + f": {str(round(auc, 3))}") # plot roc curve
+
+
+
+        # Find tpr at fpr target
+        idx = np.argmin(np.abs(fpr - target_fpr))
+        tpr_at_target.append(tpr[idx])
+        
+    ax.plot(np.linspace(0, 1, 1000), np.linspace(0, 1, 1000), "--")
+    ax.vlines(10**-5, 0, 1, colors="r", linestyles="dashed")
+
+    # Plot teaks
+    ax.loglog()
+    ax.legend()
+    ax.grid()
+    ax.set_xlabel("fpr")
+    ax.set_ylabel("tpr")
+    ax.set_title(fig_title) 
+    plt.show()
+
+    for sig_nam, tpr in zip(signal_names_hum, tpr_at_target):
+        print(sig_nam + " TPR @ FPR 10e-5 (%): " + f"{tpr*100:.2f}")
+
+    return fig
