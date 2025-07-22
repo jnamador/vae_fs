@@ -7,6 +7,8 @@ import h5py
 import numpy as np
 import tensorflow.keras as keras
 from matplotlib import pyplot as plt
+import os
+os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE" # on NERSC filelocking is not allowed
 
 def load_preprocessed_snl(file_path=None):
     """
