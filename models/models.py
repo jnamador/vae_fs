@@ -275,14 +275,14 @@ class VAE_Model(keras.Model):
             "reconstruction": reconstruction
         }
     
-class VAE_Model_ATLAS_beta(VAE_Model):
-    """
-    Same as VAE_Model but with the beta cyclical annealing from the 'ATLAS' version.
-    """
-    def cyclical_annealing_beta(self, epoch):
-        cycle = tf.floor(1.0 + epoch / self.cycle_length)
-        x = tf.abs(epoch / self.cycle_length - cycle + 1)
-        # For first half (x < 0.5), scale 2x from 0 to 1
-        # For second half (x >= 0.5), stay at 1
-        scaled_x = tf.where(x < 0.5, 2.0 * x, 1.0)
-        return self.min_beta + (self.max_beta - self.min_beta) * scaled_x
+# class VAE_Model_ATLAS_beta(VAE_Model):
+#     """
+#     Same as VAE_Model but with the beta cyclical annealing from the 'ATLAS' version.
+#     """
+#     def cyclical_annealing_beta(self, epoch):
+#         cycle = tf.floor(1.0 + epoch / self.cycle_length)
+#         x = tf.abs(epoch / self.cycle_length - cycle + 1)
+#         # For first half (x < 0.5), scale 2x from 0 to 1
+#         # For second half (x >= 0.5), stay at 1
+#         scaled_x = tf.where(x < 0.5, 2.0 * x, 1.0)
+#         return self.min_beta + (self.max_beta - self.min_beta) * scaled_x
