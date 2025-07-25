@@ -72,7 +72,8 @@ def get_truth_and_scores(encoder, ad_metric, data, debug=True):
         for key in signal_keys:
             sig = data[key]
             truths.append(np.concatenate((zeros, np.ones(len(sig)))))
-            sig_score, _ = calc_anomaly_scores(sig, encoder, ad_metric, debug=debug)
+            sig_score, bad_model = calc_anomaly_scores(sig, encoder, ad_metric, debug=debug)
+            if bad_model: break
             scores.append(np.concatenate((bg_score, sig_score)))
 
     return truths, scores, bad_model
@@ -91,17 +92,19 @@ def calc_anomaly_scores(data, encoder: keras.Model, AD_metric, debug = True):
     # has shape (len(data), 3), where col 1 is z_mean, 2 is z_log_var and z. This is by design of encoder.
     scores = np.zeros(len(data))
     bad_model = False
+
     for i in range(len(scores)):
         z_mean, z_log_var = dat_encoded[i][0], dat_encoded[i][1]
         score = AD_metric(z_mean, z_log_var)
-        if debug and (score == np.inf):
+        if debug and (np.isinf(score) or np.isnan(score)):
             print("Unstable model: inf encountered. Rejecting Model"
                   + f"z_mean: {z_mean}\n"
                   + f"z_log_var: {z_log_var}")
             
             bad_model = True
             break
-        scores[i] = score
+        else:
+            scores[i] = score
 
     return (scores, bad_model)
 
@@ -135,17 +138,18 @@ def plot_rocs(truths, scores, fig_title):
                     ]
     fig, ax = plt.subplots()
 
+    thresholds_at_target = []
     for truth, score, l in zip(truths, scores, signal_names_tex):
         fpr, tpr, thresholds = roc_curve(truth, score)
         auc = sk.roc_auc_score(truth, score)
         ax.plot(fpr, tpr, label=l + f": {str(round(auc, 3))}") # plot roc curve
 
 
-
         # Find tpr at fpr target
         idx = np.argmin(np.abs(fpr - target_fpr))
         tpr_at_target.append(tpr[idx])
-        
+        thresholds_at_target.append(thresholds[idx])
+
     ax.plot(np.linspace(0, 1, 1000), np.linspace(0, 1, 1000), "--")
     ax.vlines(10**-5, 0, 1, colors="r", linestyles="dashed")
 
@@ -158,7 +162,24 @@ def plot_rocs(truths, scores, fig_title):
     ax.set_title(fig_title) 
     plt.show()
 
-    for sig_nam, tpr in zip(signal_names_hum, tpr_at_target):
-        print(sig_nam + " TPR @ FPR 10e-5 (%): " + f"{tpr*100:.2f}")
+    for i in range(len(signal_names_hum)):
+        print(signal_names_hum[i] + " TPR @ FPR 10e-5 (%): " + f"{tpr_at_target[i]*100:.2f}\n" + f"Target Threshold {thresholds_at_target[i]}")
 
     return fig
+
+def calc_anomaly_dist(data, encoder: keras.Model, AD_metric):
+    """
+    Parameters:
+    -----------
+    data: dict | output from load_preproccessed_snl()
+    AD_metric: func(z_mean, z_log_var) | Metric used for anomaly detection, inputs should be scalars
+    """
+    dat_encoded = np.array(encoder.predict(data))[0] # This outputs shape (3, len(X_test), 3). Can't find satisfactory explanation for this behavior. (len(X_test), 3) makes sense. (3, len, 3) does not
+    # Kenny only uses the first list so we'll follow that convention.
+    # has shape (len(data), 3), where col 1 is z_mean, 2 is z_log_var and z. This is by design of encoder.
+    scores = np.zeros(len(data))
+    for i in range(len(scores)):
+        z_mean, z_log_var = dat_encoded[i][0], dat_encoded[i][1]
+        scores[i] = AD_metric(z_mean, z_log_var)
+    
+    return scores
