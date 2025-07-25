@@ -40,3 +40,6 @@ LR             = 0.00001 # Learning rate
 LR             = 0.000001 # Learning rate
 # --
 
+# Attempt 9: Changes from base: LR Decreased
+LR             = 0.0000001 # Learning rate
+# --
