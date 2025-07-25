@@ -514,12 +514,10 @@ class VAE_GAN_Model(keras.Model):
             # Ignore zero-padded entries. 
             mask = K.cast(K.not_equal(data, 0), K.floatx()) 
             reconstruction_loss = custom_mse_loss_with_multi_index_scaling(mask*reconstruction, mask*data)
-            reconstruction_loss *=(1-self.beta)
 
             # This is just standard Kullback-Leibler diversion loss. I think this can stay.
             kl_loss = -0.5 * (1 + z_log_var - tf.square(z_mean) - tf.exp(z_log_var))
             kl_loss = tf.reduce_mean(kl_loss)
-            kl_loss *=self.beta
 
             # Generator (VAE) wants to fool the discriminator
             fake_output = self.discriminator(mask*reconstruction)
@@ -529,7 +527,7 @@ class VAE_GAN_Model(keras.Model):
 
             # curr_training_gamma = self.gamma * (epoch / 50)  # TODO 50 is arbitrary based on max_epochs # Not sure what this is doing.
             
-            total_loss = reconstruction_loss + kl_loss + g_loss_adv * self.gamma
+            total_loss = reconstruction_loss*(1-self.beta) + kl_loss*self.beta + g_loss_adv * self.gamma
 
         # ----- Review for differences
         # grads = tape.gradient(total_loss, self.trainable_weights)
@@ -550,10 +548,10 @@ class VAE_GAN_Model(keras.Model):
             "reco_loss": self.reconstruction_loss_tracker.result(),
             "kl_loss": self.kl_loss_tracker.result(),
             "disc_loss": self.discriminator_loss_tracker.result(),
-            "beta": self.beta,
             "raw_loss": self.reconstruction_loss_tracker.result() + self.kl_loss_tracker.result(),
             "w_kl_loss": self.kl_loss_tracker.result() * self.beta,
             "w_disc_loss": self.discriminator_loss_tracker.result() * self.gamma,
+            "beta": self.beta,
             "gamma": self.gamma,
         }
     
