@@ -1,7 +1,7 @@
 This text holds all history and changes to GAN training parameters.
 On attempt 6 we started the single parameter training search.
 Though the parameters are the same, from 6 onwards they are retrained to record 
-the discriminator loss as it was not recorded before.
+the discriminator loss as it was not recorded before. 
 
 # Base parameters ----------
 NUM_TRAIN      = 10 # Number of iterations to train for.
@@ -30,6 +30,19 @@ MAX_BETA       = 1
 MIN_GAMMA      = 1
 MAX_GAMMA      = 50
 # ---
+
+# PAST HISTORY --------
+# Attempt History. The original code for each folder should also be tied to the commits. 
+# 0: First attempt. GAN as copied from other repo https://github.com/max-cohen54/AD_trigger_training/blob/main/L1AD/software/VAE_GAN/L1_VAE_Analyzer_FDL_GAN_ALT.ipynb
+# 1: Added GAN loss to 
+# 2: Various parametric sweeps
+# 3: Better file naming convention and varied clipnorm
+# Notes: Smaller clipnorm ~ 0.1 tended to bring down the losses rather than blowing up.
+# Keeping clipnorm to 0.1 in future trainings
+# 4: Varying gamma maxes
+# 5: gamma = 0 sanity check
+# -------------------
+
 # Attempt 6: Same as base.
 
 # Attempt 7: Changes from base: LR Decreased
