@@ -31,4 +31,8 @@ MIN_GAMMA      = 1
 MAX_GAMMA      = 50
 # ---
 # Attempt 6: Same as base.
+# Attempt 7: Changes from base: LR Decreased
+LR             = 0.00001 # Learning rate
+# --
+
 
