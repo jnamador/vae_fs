@@ -378,8 +378,14 @@ class VAE_GAN_Model(keras.Model):
         self.reconstruction_loss_tracker = keras.metrics.Mean(name="reconstruction_loss")
         self.kl_loss_tracker = keras.metrics.Mean(name="kl_loss")
 
+        # Old name, kept for continuity. This looks to be the VAE's adversarial loss.
+        # Loss due to VAE's failure to fool discriminator
         self.discriminator_loss_tracker = keras.metrics.Mean(name="discriminator_loss")
+
         self.gamma_tracker = keras.metrics.Mean(name="gamma")
+
+        # Actual discriminator loss. Discriminators inability to discriminate
+        self.d_loss_tracker = keras.metrics.Mean(name='d_loss') 
 
 
         self.beta_tracker = keras.metrics.Mean(name="beta")
@@ -415,6 +421,7 @@ class VAE_GAN_Model(keras.Model):
             self.kl_loss_tracker,
             self.discriminator_loss_tracker,
             self.beta_tracker,
+            self.d_loss_tracker
         ]
 
     def cyclical_annealing_beta(self, epoch):
@@ -548,6 +555,7 @@ class VAE_GAN_Model(keras.Model):
             "reco_loss": self.reconstruction_loss_tracker.result(),
             "kl_loss": self.kl_loss_tracker.result(),
             "disc_loss": self.discriminator_loss_tracker.result(),
+            "d_loss": self.d_loss_tracker.result(),
             "raw_loss": self.reconstruction_loss_tracker.result() + self.kl_loss_tracker.result(),
             "w_kl_loss": self.kl_loss_tracker.result() * self.beta,
             "w_disc_loss": self.discriminator_loss_tracker.result() * self.gamma,
@@ -585,6 +593,7 @@ class VAE_GAN_Model(keras.Model):
             "loss": total_loss,
             "reco_loss": reconstruction_loss,
             "kl_loss": kl_loss,
+            "d_loss": d_loss,
             "raw_loss": reconstruction_loss + kl_loss,
             "disc_loss": g_loss_adv,
             "w_kl_loss": kl_loss * self.beta,
