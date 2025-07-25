@@ -1,0 +1,28 @@
+This text holds all history and changes to GAN training parameters.
+On attempt 6 we started the single parameter training search.
+Though the parameters are the same, from 6 onwards they are retrained to record 
+the discriminator loss as it was not recorded before.
+
+# Base parameters
+NUM_TRAIN = 10 # Number of iterations to train for.
+INPUT_SZ = 57
+H1_SZ = 32 # Hidden layer 1 size
+H2_SZ = 16 # "          " 2 "  "
+LATENT_SZ = 3
+NUM_EPOCHS = 100
+BATCH_SIZE = 1024
+STOP_PATIENCE = 40
+LR_PATIENCE = 20
+DISC_H1_SZ = 8 # Size of first hidden layer of discriminator  # 8, 2 is on ATLAS-VAE-GAN
+DISC_H2_SZ = 2 # "" second hidden layer ""
+VAL_SPLIT = 0.2 # Validation split
+CYCLE_LEN = 20
+MIN_BETA = 0
+MAX_BETA = 1
+MIN_GAMMA = 1
+MAX_GAMMA = 50
+LR = 0.001 # Learning rate
+REDUCE_LR_FACTOR = 0.5
+
+# Attempt 6: Same as base.
+
