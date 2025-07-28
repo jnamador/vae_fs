@@ -56,3 +56,19 @@ LR             = 0.000001 # Learning rate
 # Attempt 9: Changes from base: LR Decreased
 LR             = 0.0000001 # Learning rate
 # --
+
+# Attempt 10: max gamma decreased
+MAX_GAMMA      = 5
+# --
+
+# Attempt 11: max gamma decreased
+MAX_GAMMA      = 1.5
+# --
+
+# Attempt 12: max gamma decreased
+MAX_GAMMA      = 1.05
+# --
+
+# Attempt 13: max gamma decreased
+MAX_GAMMA      = 1.005
+# --
