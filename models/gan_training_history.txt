@@ -72,3 +72,19 @@ MAX_GAMMA      = 1.05
 # Attempt 13: max gamma decreased
 MAX_GAMMA      = 1.005
 # --
+
+# Attempt 14: max beta decreased
+MAX_BETA       = 0.5
+# --
+
+# Attempt 15: max beta increased
+MAX_BETA       = 2
+# --
+
+# Attempt 16: max beta increased
+MAX_BETA       = 5
+# --
+
+# Attempt 17: max gamma decreased
+MAX_BETA       = 10
+# --
