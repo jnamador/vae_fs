@@ -549,6 +549,7 @@ class VAE_GAN_Model(keras.Model):
         self.reconstruction_loss_tracker.update_state(reconstruction_loss)
         self.kl_loss_tracker.update_state(kl_loss)
         self.discriminator_loss_tracker.update_state(g_loss_adv)
+        self.d_loss_tracker.update_state(d_loss)
         
         return {
             "loss": self.total_loss_tracker.result(),
