@@ -88,3 +88,27 @@ MAX_BETA       = 5
 # Attempt 17: max gamma decreased
 MAX_BETA       = 10
 # --
+
+# ATTEMPTS [18 - 21] -------------
+# Like attempts [10 - 13]. Except Min gamma reduced to 0
+
+ATTEMPT_NUM = 18 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 5
+# --
+
+ATTEMPT_NUM = 19 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1.5
+# --
+
+ATTEMPT_NUM = 20 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1.05
+# --
+
+ATTEMPT_NUM = 21 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1.005
+# --
+# --------------------------------
