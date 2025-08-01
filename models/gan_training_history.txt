@@ -112,3 +112,33 @@ MIN_GAMMA      = 0
 MAX_GAMMA      = 1.005
 # --
 # --------------------------------
+
+
+# ATTEMPTS [22 - 24] -------------
+# Like attempts [18 - 21]. but with LR reduced to Attempt 8's LR. Since we saw 
+# the vae loss consistently drop.
+
+ATTEMPT_NUM = 22 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 5
+LR             = 0.000001 # Learning rate
+# --
+
+ATTEMPT_NUM = 23 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1.5
+LR             = 0.000001 # Learning rate
+# --
+
+ATTEMPT_NUM = 24 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1.05
+LR             = 0.000001 # Learning rate
+# --
+
+ATTEMPT_NUM = 25 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1.005
+LR             = 0.000001 # Learning rate
+# --
+# --------------------------------
