@@ -243,4 +243,44 @@ LR_PATIENCE    = 40
 # --
 # --------------------------------
 
+# ATTEMPTS [38 - 41] -------------
+# Like attempt 37 but with learning rate varied.
+# Attempt 37 seems to give classic GAN tug of war.
+# Looking for other LR that could help the GAN find the equilibrium instead
+# of increasing the LR patience.
+
+
+ATTEMPT_NUM = 38 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.000008 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 39 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.00001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 40 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.00002 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 41 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.00005 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+# --------------------------------
+
 
