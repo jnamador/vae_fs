@@ -114,7 +114,7 @@ MAX_GAMMA      = 1.005
 # --------------------------------
 
 
-# ATTEMPTS [22 - 24] -------------
+# ATTEMPTS [22 - 25] -------------
 # Like attempts [18 - 21]. but with LR reduced to Attempt 8's LR. Since we saw 
 # the vae loss consistently drop.
 
@@ -142,3 +142,105 @@ MAX_GAMMA      = 1.005
 LR             = 0.000001 # Learning rate
 # --
 # --------------------------------
+
+# ATTEMPTS [26 - 29] -------------
+# Like attempts [22 - 25]. but with max gamma decreased further
+
+ATTEMPT_NUM = 26 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1
+LR             = 0.000001 # Learning rate
+# --
+
+ATTEMPT_NUM = 27 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.5
+LR             = 0.000001 # Learning rate
+# --
+
+ATTEMPT_NUM = 28 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.25
+LR             = 0.000001 # Learning rate
+# --
+
+ATTEMPT_NUM = 29 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.000001 # Learning rate
+# --
+# --------------------------------
+
+# ATTEMPTS [30 - 33] -------------
+# Like attempts [26 - 29]. with learning rate patiences doubles
+
+ATTEMPT_NUM = 30 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 1
+LR             = 0.000001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 31 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.5
+LR             = 0.000001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 32 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.25
+LR             = 0.000001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 33 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.000001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+# --------------------------------
+
+# ATTEMPTS [34 - 37] -------------
+# Like attempts [30 - 33 ] but with max gamma reduced to 0.1 and LR varied
+
+ATTEMPT_NUM = 34 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.000001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 35 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.000002 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 36 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.000004 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 37 # max gamma decreased, min gamma decreased
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.1
+LR             = 0.00001 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+# --------------------------------
+
+
