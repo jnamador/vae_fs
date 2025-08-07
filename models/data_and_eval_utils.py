@@ -8,6 +8,8 @@ import numpy as np
 import tensorflow.keras as keras
 from matplotlib import pyplot as plt
 import os
+import sklearn.metrics as sk
+from sklearn.metrics import roc_curve
 os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE" # on NERSC filelocking is not allowed
 
 def load_preprocessed_snl(file_path=None):
@@ -174,12 +176,14 @@ def calc_anomaly_dist(data, encoder: keras.Model, AD_metric):
     data: dict | output from load_preproccessed_snl()
     AD_metric: func(z_mean, z_log_var) | Metric used for anomaly detection, inputs should be scalars
     """
-    dat_encoded = np.array(encoder.predict(data))[0] # This outputs shape (3, len(X_test), 3). Can't find satisfactory explanation for this behavior. (len(X_test), 3) makes sense. (3, len, 3) does not
-    # Kenny only uses the first list so we'll follow that convention.
-    # has shape (len(data), 3), where col 1 is z_mean, 2 is z_log_var and z. This is by design of encoder.
-    scores = np.zeros(len(data))
-    for i in range(len(scores)):
-        z_mean, z_log_var = dat_encoded[i][0], dat_encoded[i][1]
-        scores[i] = AD_metric(z_mean, z_log_var)
-    
+    scores = []
+    for _, dat in data.items():
+        dat_encoded = np.array(encoder.predict(data))[0] # This outputs shape (3, len(X_test), 3). Can't find satisfactory explanation for this behavior. (len(X_test), 3) makes sense. (3, len, 3) does not
+        # Kenny only uses the first list so we'll follow that convention.
+        # has shape (len(data), 3), where col 1 is z_mean, 2 is z_log_var and z. This is by design of encoder.
+        temp_score = np.zeros(len(data))
+        for i in range(len(temp_score)):
+            z_mean, z_log_var = dat_encoded[i][0], dat_encoded[i][1]
+            temp_score[i] = AD_metric(z_mean, z_log_var)
+        scores.append(temp_score)
     return scores
