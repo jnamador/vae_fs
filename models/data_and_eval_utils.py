@@ -12,6 +12,17 @@ import sklearn.metrics as sk
 from sklearn.metrics import roc_curve
 os.environ["HDF5_USE_FILE_LOCKING"] = "FALSE" # on NERSC filelocking is not allowed
 
+SIG_KEYS = { # Only contains the keys to signal data. Background and training data is not included.
+    'Ato4l':      {'human': "A to 4L",
+                   'latex': "$A\\rightarrow 4\ell$"},
+    'hToTauTau':  {'human': "h to Tau Tau",
+                   'latex': "$h^0\\rightarrow\\tau\\tau$"},
+    'hChToTauNu': {'human': "h to Tau Nu",
+                   'latex': "$h^{\pm}\\rightarrow\\tau \\nu$"},
+    'leptoquark': {'human': "Leptoquark",
+                   'latex': "Leptoquark"},
+    }
+
 def load_preprocessed_snl(file_path=None):
     """
     Returns a dict of numpy arrays read from the HDF5 file at `file_path`.
@@ -57,8 +68,8 @@ def get_truth_and_scores(encoder, ad_metric, data, debug=True):
 
     Returns
     -------
-    truths  : list[np.ndarray]
-    scores  : list[np.ndarray]
+    truths  : dict{SIG_KEY: np.array}
+    scores  : dict{SIG_KEY: np.array}
     bad_model : bool
     """
     # unpack once for readability
@@ -68,15 +79,17 @@ def get_truth_and_scores(encoder, ad_metric, data, debug=True):
 
     truths, scores = [], []
     zeros = np.zeros(len(X_test))
-    signal_keys = ["Ato4l", "hToTauTau", "hChToTauNu", "leptoquark"]
+
+    truths = {}
+    scores = {}
 
     if not bad_model:
-        for key in signal_keys:
+        for key in SIG_KEYS.keys():
             sig = data[key]
-            truths.append(np.concatenate((zeros, np.ones(len(sig)))))
+            truths[key] = np.concatenate((zeros, np.ones(len(sig))))
             sig_score, bad_model = calc_anomaly_scores(sig, encoder, ad_metric, debug=debug)
             if bad_model: break
-            scores.append(np.concatenate((bg_score, sig_score)))
+            scores[key] = np.concatenate((bg_score, sig_score))
 
     return truths, scores, bad_model
 
@@ -99,7 +112,7 @@ def calc_anomaly_scores(data, encoder: keras.Model, AD_metric, debug = True):
         z_mean, z_log_var = dat_encoded[i][0], dat_encoded[i][1]
         score = AD_metric(z_mean, z_log_var)
         if debug and (np.isinf(score) or np.isnan(score)):
-            print("Unstable model: inf encountered. Rejecting Model"
+            print("Unstable model: inf or nan encountered. Rejecting Model"
                   + f"z_mean: {z_mean}\n"
                   + f"z_log_var: {z_log_var}")
             
@@ -131,54 +144,67 @@ def get_roc_performance(truth, score, target_fpr):
     idx = np.argmin(np.abs(fpr - target_fpr))
     tpr_at_target = tpr[idx]
     threshold_at_target = thresholds[idx]
-    return {'fpr': fpr,
-            'tpr': tpr,
-            'auc' : auc,
-            'tpr_at_target': tpr_at_target,
-            'threshold_at_target': threshold_at_target,
+    return {
+        'fpr': fpr,
+        'tpr': tpr,
+        'auc' : auc,
+        'tpr_at_target': tpr_at_target,
+        'threshold_at_target': threshold_at_target,
 
-    } 
+    }
 
-def plot_rocs(truths, scores, fig_title, target_fpr = 1e-5):
-    tpr_at_target = []
-    signal_names_tex = [ # latex version
-                    "$A\\rightarrow 4\ell$"
-                    , "$h^0\\rightarrow\\tau\\tau$"
-                    , "$h^{\pm}\\rightarrow\\tau \\nu$"
-                    ,"Leptoquark"
-                    ]
-    signal_names_hum = [ # human readable
-                    "A to 4L"
-                    , "h to Tau Nu"
-                    , "h to Tau Tau"
-                    ,"Leptoquark"
-                    ]
+def eval_rocs(encoder, data, AD_metric, target_fpr = 1e-5):
+    """Evaluates the ROC Curves for the encoder
+    Returns: dict | None. dict is structured as {sig_name: {get_roc_perfomance output}}"""
+    truths, scores, bad_model = get_truth_and_scores(encoder, AD_metric, data)
+    roc_perfs = {}
+    if bad_model:
+        return None
+    else:
+        for k in SIG_KEYS.keys():
+            roc_perfs[k] = get_roc_performance(truths[k], scores[k], target_fpr)
+        return roc_perfs
+
+
+def plot_rocs(roc_perfs, fig_title):
     fig, ax = plt.subplots()
 
-    thresholds_at_target = []
-    for truth, score, l in zip(truths, scores, signal_names_tex):
-        metrics = get_roc_performance(truth, score, target_fpr)
-        ax.plot(metrics['fpr'], metrics['tpr'], label=l + f": {str(round(metrics['auc'], 3))}") # plot roc curve
+    if roc_perfs is None:
+        print("Unstable Model")
+    else:
+        for k in SIG_KEYS.keys():
+            metrics = roc_perfs[k]
+            label = SIG_KEYS[k]['human']
+            ax.plot(metrics['fpr'], metrics['tpr'], label=label + f": {str(round(metrics['auc'], 3))}") # plot roc curve
 
-        tpr_at_target.append(metrics['tpr_at_target'])
-        thresholds_at_target.append(metrics['threshold_at_target'])
+        ax.plot(np.linspace(0, 1, 1000), np.linspace(0, 1, 1000), "--")
+        ax.vlines(10**-5, 0, 1, color="r" , linestyles="dashed")
 
-    ax.plot(np.linspace(0, 1, 1000), np.linspace(0, 1, 1000), "--")
-    ax.vlines(10**-5, 0, 1, colors="r", linestyles="dashed")
+        # Plot teaks
+        ax.loglog()
+        ax.legend()
+        ax.grid()
+        ax.set_xlabel("fpr")
+        ax.set_ylabel("tpr")
+        ax.set_title(fig_title) 
+        plt.show()
 
-    # Plot teaks
-    ax.loglog()
-    ax.legend()
-    ax.grid()
-    ax.set_xlabel("fpr")
-    ax.set_ylabel("tpr")
-    ax.set_title(fig_title) 
-    plt.show()
+        # Sanity check
+        temp = [roc_perfs[k]['threshold_at_target'] for k in SIG_KEYS.keys()]
+        test = [temp[0] == t for t in temp]
+        if all(test):
+            print("We good. All Tresholds match")
+            print(f"Treshold at Target: {temp[0]}")
+        else:
+            print("We're cooked. No clue how this happened")
 
-    for i in range(len(signal_names_hum)):
-        print(signal_names_hum[i] + " TPR @ FPR 10e-5 (%): " + f"{tpr_at_target[i]*100:.2f}\n" + f"Target Threshold {thresholds_at_target[i]}")
+        for k in SIG_KEYS.keys():
+            sig_name_hum = SIG_KEYS[k]['human']
+            tpr_at_target = roc_perfs[k]['tpr_at_target']
+            
+            print(sig_name_hum + " TPR @ FPR 10e-5 (%): " + f"{tpr_at_target*100:.2f}\n")
 
-    return fig
+        return fig
 
 def calc_anomaly_dist(data, encoder: keras.Model, AD_metric):
     """
