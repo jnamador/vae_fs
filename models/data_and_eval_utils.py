@@ -190,14 +190,13 @@ def plot_rocs(roc_perfs, fig_title):
         plt.show()
 
         # Sanity check
-        temp = [roc_perfs[k]['threshold_at_target'] for k in SIG_KEYS.keys()]
-        test = [temp[0] == t for t in temp]
-        if all(test):
-            print("We good. All Tresholds match")
-            print(f"Treshold at Target: {temp[0]}")
+        thresholds = [roc_perfs[k]['threshold_at_target'] for k in SIG_KEYS]
+        if np.allclose(thresholds, thresholds[0], rtol=1e-9, atol=0.0):
+            print(f"Threshold at target: {thresholds[0]}")
         else:
-            print("We're cooked. No clue how this happened")
+            print("Thresholds differ across signals:", thresholds)
 
+        # Print the thresholds
         for k in SIG_KEYS.keys():
             sig_name_hum = SIG_KEYS[k]['human']
             tpr_at_target = roc_perfs[k]['tpr_at_target']
