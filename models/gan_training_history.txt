@@ -283,4 +283,82 @@ LR_PATIENCE    = 40
 # --
 # --------------------------------
 
+# ATTEMPTS [42 - 45] -------------
+# Like attempt 38 but with learning rate varied.
+# Attempt 38 seems to gave us more GAN tug of wars.
+# reduced gamma cause it still seems to dominate.
+
+
+ATTEMPT_NUM = 42 # 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.001
+LR             = 0.000008 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 43 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.005
+LR             = 0.000008 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 44 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.01
+LR             = 0.000008 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 45 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.05
+LR             = 0.000008 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+# --------------------------------
+
+# ATTEMPTS [46 - 48] -------------
+# Like attempt 42 - 45 but with learning rate varied.
+# LR increase just a little
+
+
+ATTEMPT_NUM = 46 # 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.001
+LR             = 0.000009 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 47 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.005
+LR             = 0.000009 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 48
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.01
+LR             = 0.000009 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+
+ATTEMPT_NUM = 49 
+MIN_GAMMA      = 0
+MAX_GAMMA      = 0.05
+LR             = 0.000009 # Learning rate
+STOP_PATIENCE  = 80
+LR_PATIENCE    = 40
+# --
+# --------------------------------
+
+
 
