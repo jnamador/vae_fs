@@ -68,7 +68,7 @@ def get_truth_and_scores(encoder, ad_metric, data, debug=True):
 
     truths, scores = [], []
     zeros = np.zeros(len(X_test))
-    signal_keys = ["leptoquark", "Ato4l", "hChToTauNu", "hToTauTau"]
+    signal_keys = ["Ato4l", "hToTauTau", "hChToTauNu", "leptoquark"]
 
     if not bad_model:
         for key in signal_keys:
@@ -123,34 +123,45 @@ def AD_score_CKL(z_mean, _): # z_log_var not used
 def AD_score_Rz(z_mean, z_log_var):
     return z_mean**2/np.exp(z_log_var)
 
-def plot_rocs(truths, scores, fig_title):
-    target_fpr = 1e-5
+def get_roc_performance(truth, score, target_fpr):
+    """Calculates the AUC for the ROC as well as getting the True Positive Rate 
+    at the Target False Positive Rate"""
+    fpr, tpr, thresholds = roc_curve(truth, score)
+    auc = sk.roc_auc_score(truth, score)
+    idx = np.argmin(np.abs(fpr - target_fpr))
+    tpr_at_target = tpr[idx]
+    threshold_at_target = thresholds[idx]
+    return {'fpr': fpr,
+            'tpr': tpr,
+            'auc' : auc,
+            'tpr_at_target': tpr_at_target,
+            'threshold_at_target': threshold_at_target,
+
+    } 
+
+def plot_rocs(truths, scores, fig_title, target_fpr = 1e-5):
     tpr_at_target = []
     signal_names_tex = [ # latex version
-                    "Leptoquark"
-                    , "$A\\rightarrow 4\ell$"
-                    , "$h^{\pm}\\rightarrow\\tau \\nu$"
+                    "$A\\rightarrow 4\ell$"
                     , "$h^0\\rightarrow\\tau\\tau$"
+                    , "$h^{\pm}\\rightarrow\\tau \\nu$"
+                    ,"Leptoquark"
                     ]
     signal_names_hum = [ # human readable
-                    "Leptoquark"
-                    ,"A to 4L"
+                    "A to 4L"
                     , "h to Tau Nu"
                     , "h to Tau Tau"
+                    ,"Leptoquark"
                     ]
     fig, ax = plt.subplots()
 
     thresholds_at_target = []
     for truth, score, l in zip(truths, scores, signal_names_tex):
-        fpr, tpr, thresholds = roc_curve(truth, score)
-        auc = sk.roc_auc_score(truth, score)
-        ax.plot(fpr, tpr, label=l + f": {str(round(auc, 3))}") # plot roc curve
+        metrics = get_roc_performance(truth, score, target_fpr)
+        ax.plot(metrics['fpr'], metrics['tpr'], label=l + f": {str(round(metrics['auc'], 3))}") # plot roc curve
 
-
-        # Find tpr at fpr target
-        idx = np.argmin(np.abs(fpr - target_fpr))
-        tpr_at_target.append(tpr[idx])
-        thresholds_at_target.append(thresholds[idx])
+        tpr_at_target.append(metrics['tpr_at_target'])
+        thresholds_at_target.append(metrics['threshold_at_target'])
 
     ax.plot(np.linspace(0, 1, 1000), np.linspace(0, 1, 1000), "--")
     ax.vlines(10**-5, 0, 1, colors="r", linestyles="dashed")
