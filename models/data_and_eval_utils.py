@@ -166,7 +166,7 @@ def eval_rocs(encoder, data, AD_metric, target_fpr = 1e-5):
         return roc_perfs
 
 
-def plot_rocs(roc_perfs, fig_title):
+def plot_rocs(roc_perfs, fig_title, show=False):
     fig, ax = plt.subplots()
 
     if roc_perfs is None:
@@ -187,21 +187,20 @@ def plot_rocs(roc_perfs, fig_title):
         ax.set_xlabel("fpr")
         ax.set_ylabel("tpr")
         ax.set_title(fig_title) 
-        plt.show()
+        if show:
+            plt.show()
 
-        # Sanity check
+        # # Sanity check
         thresholds = [roc_perfs[k]['threshold_at_target'] for k in SIG_KEYS]
-        if np.allclose(thresholds, thresholds[0], rtol=1e-9, atol=0.0):
-            print(f"Threshold at target: {thresholds[0]}")
-        else:
+        if not(np.allclose(thresholds, thresholds[0], rtol=1e-9, atol=0.0)):
             print("Thresholds differ across signals:", thresholds)
 
         # Print the thresholds
-        for k in SIG_KEYS.keys():
-            sig_name_hum = SIG_KEYS[k]['human']
-            tpr_at_target = roc_perfs[k]['tpr_at_target']
+        # for k in SIG_KEYS.keys():
+        #     sig_name_hum = SIG_KEYS[k]['human']
+        #     tpr_at_target = roc_perfs[k]['tpr_at_target']
             
-            print(sig_name_hum + " TPR @ FPR 10e-5 (%): " + f"{tpr_at_target*100:.2f}\n")
+        #     print(sig_name_hum + " TPR @ FPR 10e-5 (%): " + f"{tpr_at_target*100:.2f}\n")
 
         return fig
 
